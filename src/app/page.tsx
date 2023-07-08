@@ -44,7 +44,9 @@ const HomePage = () => {
         }
       );
 
-      const videoIDs = response.data.items.map(({ id }) => id.videoId);
+      const videoIDs = response.data.items.map(
+        ({ id }: { id: { videoId: string } }) => id.videoId
+      );
 
       const videoDetailsResponse = await axios.get(
         "https://www.googleapis.com/youtube/v3/videos",
