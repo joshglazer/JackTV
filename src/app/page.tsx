@@ -79,7 +79,6 @@ const HomePage = () => {
           return false;
         }
       );
-      console.log(filteredVideos);
 
       setVideos(filteredVideos);
     } catch (error) {
@@ -91,25 +90,32 @@ const HomePage = () => {
     <div>
       <SearchAppBar onChange={handleInputChange} />
 
-      {videos.map((video: any) => (
-        <Box key={video.id} sx={{ textAlign: "center", marginBottom: "2em" }}>
-          <Typography
-            variant="h6"
-            component="h2"
-            sx={{ marginBottom: "0.5em", marginTop: "0.25em" }}
-          >
-            {video.snippet.title}
-          </Typography>
-          <Image
-            src={video.snippet.thumbnails.standard.url}
-            alt="Next.js Logo"
-            width={video.snippet.thumbnails.standard.width}
-            height={video.snippet.thumbnails.standard.height}
-            priority
-            onClick={() => setModalVideoId(video.id)}
-          />
-        </Box>
-      ))}
+      {videos.map((video: any) => {
+        const thumbnail =
+          video.snippet.thumbnails.standard ??
+          video.snippet.thumbnails.medium ??
+          video.snippet.thumbnails.default;
+
+        return (
+          <Box key={video.id} sx={{ textAlign: "center", marginBottom: "2em" }}>
+            <Typography
+              variant="h6"
+              component="h2"
+              sx={{ marginBottom: "0.5em", marginTop: "0.25em" }}
+            >
+              {video.snippet.title}
+            </Typography>
+            <Image
+              src={thumbnail.standard.url}
+              alt={`${video.snippet.title} thumbnail`}
+              width={thumbnail.standard.width}
+              height={thumbnail.standard.height}
+              priority
+              onClick={() => setModalVideoId(video.id)}
+            />
+          </Box>
+        );
+      })}
 
       <Dialog
         fullScreen
