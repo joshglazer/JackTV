@@ -1,5 +1,5 @@
 {
-  "name": "bedtime-tv",
+  "name": "jackTV",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,14 +9,29 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.13.7",
+    "@mui/material": "^5.13.7",
     "@types/node": "20.4.1",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
+    "add": "^2.0.6",
+    "axios": "^1.4.0",
     "eslint": "8.44.0",
     "eslint-config-next": "13.4.9",
+    "lodash": "^4.17.21",
     "next": "13.4.9",
+    "querystring": "^0.2.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "typescript": "5.1.6"
+    "react-modal-video": "^2.0.1",
+    "sass": "^1.63.6",
+    "typescript": "5.1.6",
+    "yarn": "^1.22.19"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.195",
+    "@types/react-modal-video": "^1.2.0"
   }
 }

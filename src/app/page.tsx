@@ -1,95 +1,131 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client";
 
-export default function Home() {
+import axios from "axios";
+import { debounce } from "lodash";
+import Image from "next/image";
+import { useState } from "react";
+import ModalVideo from "react-modal-video";
+import "react-modal-video/scss/modal-video.scss";
+import SearchAppBar from "./components/SearchAppBar";
+import Dialog from "@mui/material/Dialog";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+
+const HomePage = () => {
+  const [videos, setVideos] = useState([]);
+  const [modalVideoId, setModalVideoId] = useState<string>();
+
+  const debouncedOnChange = debounce((value: string) => {
+    // Handle the debounced change event here
+    searchYoutube(value);
+  }, 500); // Adjust the debounce delay (in milliseconds) according to your needs
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.value;
+    // setInputValue(newValue);
+    debouncedOnChange(newValue);
+  };
+
+  const searchYoutube = async (searchTerm: string) => {
+    try {
+      const response = await axios.get(
+        "https://www.googleapis.com/youtube/v3/search",
+        {
+          params: {
+            q: `${searchTerm} 5 minutes`,
+            part: "id",
+            type: "video",
+            maxResults: 50,
+            key: "AIzaSyC_-_5Kdz9RzphIs_--S_WGylcQG_MJgkY",
+            videoEmbeddable: "true",
+            relevanceLanguage: "en",
+            duration: "medium",
+          },
+        }
+      );
+
+      const videoIDs = response.data.items.map(({ id }) => id.videoId);
+
+      const videoDetailsResponse = await axios.get(
+        "https://www.googleapis.com/youtube/v3/videos",
+        {
+          params: {
+            q: searchTerm,
+            part: "id,snippet,contentDetails",
+            id: videoIDs.join(","),
+            key: process.env.NEXT_PUBLIC_YOUTUBE_API_KEY,
+          },
+        }
+      );
+
+      const filteredVideos = videoDetailsResponse.data.items.filter(
+        (video: any) => {
+          const duration = video.contentDetails.duration;
+          const durationRegex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
+
+          if (duration) {
+            const match = duration.match(durationRegex);
+            if (match) {
+              const [, hours, minutes, seconds] = match;
+              const totalSeconds =
+                (parseInt(hours) || 0) * 3600 +
+                (parseInt(minutes) || 0) * 60 +
+                (parseInt(seconds) || 0);
+              return totalSeconds < 360; // Filter videos less than 6 minutes (360 seconds)
+            }
+          }
+          return false;
+        }
+      );
+      console.log(filteredVideos);
+
+      setVideos(filteredVideos);
+    } catch (error) {
+      console.error("Error searching videos:", error);
+    }
+  };
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div>
+      <SearchAppBar onChange={handleInputChange} />
+
+      {videos.map((video: any) => (
+        <Box key={video.id} sx={{ textAlign: "center", marginBottom: "2em" }}>
+          <Typography
+            variant="h6"
+            component="h2"
+            sx={{ marginBottom: "0.5em", marginTop: "0.25em" }}
           >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+            {video.snippet.title}
+          </Typography>
+          <Image
+            src={video.snippet.thumbnails.standard.url}
+            alt="Next.js Logo"
+            width={video.snippet.thumbnails.standard.width}
+            height={video.snippet.thumbnails.standard.height}
+            priority
+            onClick={() => setModalVideoId(video.id)}
+          />
+        </Box>
+      ))}
+
+      <Dialog
+        fullScreen
+        open={!!modalVideoId}
+        onClose={() => setModalVideoId(undefined)}
+      >
+        <div>
+          <ModalVideo
+            channel="youtube"
+            youtube={{ mute: 0, autoplay: 0, rel: 0 }}
+            isOpen={!!modalVideoId}
+            videoId={modalVideoId || ""}
+            onClose={() => setModalVideoId(undefined)}
+          />
         </div>
-      </div>
+      </Dialog>
+    </div>
+  );
+};
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
-}
+export default HomePage;
