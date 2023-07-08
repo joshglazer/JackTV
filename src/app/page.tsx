@@ -106,10 +106,10 @@ const HomePage = () => {
               {video.snippet.title}
             </Typography>
             <Image
-              src={thumbnail.standard.url}
+              src={thumbnail.url}
               alt={`${video.snippet.title} thumbnail`}
-              width={thumbnail.standard.width}
-              height={thumbnail.standard.height}
+              width={thumbnail.width}
+              height={thumbnail.height}
               priority
               onClick={() => setModalVideoId(video.id)}
             />
