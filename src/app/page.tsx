@@ -36,7 +36,7 @@ const HomePage = () => {
             part: "id",
             type: "video",
             maxResults: 50,
-            key: "AIzaSyC_-_5Kdz9RzphIs_--S_WGylcQG_MJgkY",
+            key: process.env.NEXT_PUBLIC_YOUTUBE_API_KEY,
             videoEmbeddable: "true",
             relevanceLanguage: "en",
             duration: "medium",
