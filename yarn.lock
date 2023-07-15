@@ -414,6 +414,18 @@
   dependencies:
     tslib "^2.4.0"
 
+"@types/gapi.youtube@^3.0.35":
+  version "3.0.35"
+  resolved "https://registry.yarnpkg.com/@types/gapi.youtube/-/gapi.youtube-3.0.35.tgz#87fdc482d948cf1f52fced0c39a641fa4e28eba4"
+  integrity sha512-U17CuGgwn+EiA5EWRFN3IST1s69TIDeUmvilwKmWUqoVBSfKju2bWJcaSQbxEyC05b/9F15zAd41pkfOCmhUWA==
+  dependencies:
+    "@types/gapi" "*"
+
+"@types/gapi@*":
+  version "0.0.44"
+  resolved "https://registry.yarnpkg.com/@types/gapi/-/gapi-0.0.44.tgz#f097f7a0f59d63a59098a08a62a560ca168426fb"
+  integrity sha512-hsgJMfZ/pMwI15UlAYHMNwj8DRoigo1odhbPwEXdp19ZQwQAXbcRrpzaDsfc+9XM6RtGpvl4Ja7uW8A+KPCa7w==
+
 "@types/json5@^0.0.29":
   version "0.0.29"
   resolved "https://registry.yarnpkg.com/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"

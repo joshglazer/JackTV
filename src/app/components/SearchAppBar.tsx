@@ -1,3 +1,4 @@
+import { useVideoSearchContext } from "@/store/VideoSearchContext";
 import SearchIcon from "@mui/icons-material/Search";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -5,6 +6,7 @@ import InputBase, { InputBaseProps } from "@mui/material/InputBase";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { alpha, styled } from "@mui/material/styles";
+import { debounce } from "lodash";
 import Image from "next/image";
 
 const Search = styled("div")(({ theme }) => ({
@@ -49,11 +51,22 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-interface SearchAppBarProps {
-  onChange: InputBaseProps["onChange"];
-}
+export default function SearchAppBar() {
+  const { updateSearchTerm } = useVideoSearchContext();
 
-export default function SearchAppBar({ onChange }: SearchAppBarProps) {
+  const debouncedOnChange = debounce((value: string) => {
+    updateSearchTerm(value);
+  }, 500);
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.value;
+    debouncedOnChange(newValue);
+  };
+
+  const resetSearch = () => {
+    updateSearchTerm("");
+  };
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -64,6 +77,7 @@ export default function SearchAppBar({ onChange }: SearchAppBarProps) {
             width={80}
             height={90}
             priority
+            onClick={resetSearch}
           />
           <Typography
             variant="h6"
@@ -80,7 +94,7 @@ export default function SearchAppBar({ onChange }: SearchAppBarProps) {
             <StyledInputBase
               placeholder="Search…"
               inputProps={{ "aria-label": "search" }}
-              onChange={onChange}
+              onChange={handleInputChange}
             />
           </Search>
         </Toolbar>
