@@ -1,3 +1,4 @@
+import { mockVideos } from "@/data/mockVideos";
 import axios from "axios";
 import {
   ReactNode,
@@ -33,7 +34,7 @@ type Props = {
 
 export function VideoSearchProvider({ children }: Props): JSX.Element {
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [videos, setVideos] = useState([]);
+  const [videos, setVideos] = useState<any[]>([]);
 
   const value: VideoSearchContextType = {
     searchTerm,
@@ -50,6 +51,11 @@ export function VideoSearchProvider({ children }: Props): JSX.Element {
   }, [searchTerm]);
 
   const searchYoutube = async (searchTerm: string) => {
+    if (process.env.NEXT_PUBLIC_USE_MOCK_DATA) {
+      setVideos(mockVideos);
+      return;
+    }
+
     if (searchTerm) {
       try {
         const response = await axios.get(

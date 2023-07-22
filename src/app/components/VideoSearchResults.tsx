@@ -1,41 +1,45 @@
+import Grid from "@mui/material/Grid";
 import { Fragment, useState } from "react";
 import VideoThumbnail from "./VideoThumbnail";
-import ModalVideo from "react-modal-video";
-import Dialog from "@mui/material/Dialog";
+import VideoModal from "./VideoModal";
 
 interface VideoSearchResultsProps {
   videos: any[];
 }
 
 function VideoSearchResults({ videos }: VideoSearchResultsProps): JSX.Element {
-  const [modalVideoId, setModalVideoId] = useState<string | undefined>();
+  const [selectedVideoId, setSelectedVideoId] = useState<string | undefined>();
+
+  function handleClick(videoId: string) {
+    setSelectedVideoId(videoId);
+  }
+
+  function handleClose() {
+    setSelectedVideoId(undefined);
+  }
 
   return (
     <Fragment>
-      {videos.map((video: any) => {
-        return (
-          <VideoThumbnail
-            key={video.id}
-            video={video}
-            onClick={() => setModalVideoId(video.id)}
-          />
-        );
-      })}
-      <Dialog
-        fullScreen
-        open={!!modalVideoId}
-        // onClose={() => setModalVideoId(undefined)}
+      <Grid
+        container
+        spacing={2}
+        justifyContent="space-evenly"
+        alignItems="center"
+        sx={{ marginTop: "1em" }}
       >
-        <div>
-          <ModalVideo
-            channel="youtube"
-            youtube={{ mute: 0, autoplay: 0, rel: 0 }}
-            isOpen={!!modalVideoId}
-            videoId={modalVideoId || ""}
-            onClose={() => setModalVideoId(undefined)}
-          />
-        </div>
-      </Dialog>
+        {videos.map((video: any) => {
+          return (
+            <Grid key={video.id} item alignSelf={"center"}>
+              <VideoThumbnail
+                key={video.id}
+                video={video}
+                onClick={handleClick}
+              />
+            </Grid>
+          );
+        })}
+      </Grid>
+      <VideoModal videoId={selectedVideoId} handleClose={handleClose} />
     </Fragment>
   );
 }
