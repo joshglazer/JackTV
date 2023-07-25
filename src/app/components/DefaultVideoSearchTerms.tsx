@@ -4,11 +4,11 @@ import { useVideoSearchContext } from "@/store/VideoSearchContext";
 import Button from "@mui/material/Button";
 import { Fragment, MouseEvent } from "react";
 
-interface defaultVideoSearchTermItem {
+interface DefaultVideoSearchTermItem {
   name: string;
 }
 
-const defaultVideoSearchTermItems: defaultVideoSearchTermItem[] = [
+const defaultVideoSearchTermItems: DefaultVideoSearchTermItem[] = [
   {
     name: "Paw Patrol",
   },

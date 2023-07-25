@@ -7,6 +7,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 
@@ -38,11 +39,14 @@ export function VideoSearchProvider({ children }: Props): JSX.Element {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [videos, setVideos] = useState<any[]>([]);
 
-  const value: VideoSearchContextType = {
-    searchTerm,
-    updateSearchTerm,
-    videos,
-  };
+  const value: VideoSearchContextType = useMemo(
+    () => ({
+      searchTerm,
+      updateSearchTerm,
+      videos,
+    }),
+    [searchTerm, videos]
+  );
 
   function updateSearchTerm(updatedSearchTerm: string) {
     console.log("HI");

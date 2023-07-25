@@ -1,4 +1,3 @@
-import { VideoSearchProvider } from "@/store/VideoSearchContext";
 import "react-modal-video/scss/modal-video.scss";
 import DisplayVideos from "./components/DisplayVideos";
 

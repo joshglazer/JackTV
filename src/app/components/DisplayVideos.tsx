@@ -10,7 +10,7 @@ export default function DisplayVideos() {
 
   return (
     <Fragment>
-      {!!videos.length ? (
+      {videos.length ? (
         <VideoSearchResults videos={videos} />
       ) : (
         <DefaultVideoSearchTerms />
