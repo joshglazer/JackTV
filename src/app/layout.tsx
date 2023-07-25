@@ -1,10 +1,9 @@
 import { VideoSearchProvider } from "@/store/VideoSearchContext";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Footer from "./components/Footer";
-import Header from "./components/Header";
 import "./globals.css";
 import ThemeRegistry from "./ThemeRegistry";
+import { Header, Footer } from "./components/layout";
 
 const inter = Inter({ subsets: ["latin"] });
 
