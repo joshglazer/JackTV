@@ -1,3 +1,5 @@
+"use client";
+
 import { mockVideos } from "@/data/mockVideos";
 import axios from "axios";
 import {
@@ -43,6 +45,7 @@ export function VideoSearchProvider({ children }: Props): JSX.Element {
   };
 
   function updateSearchTerm(updatedSearchTerm: string) {
+    console.log("HI");
     setSearchTerm(updatedSearchTerm);
   }
 

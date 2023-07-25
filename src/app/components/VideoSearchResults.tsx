@@ -1,3 +1,5 @@
+"use client";
+
 import Grid from "@mui/material/Grid";
 import { Fragment, useState } from "react";
 import VideoThumbnail from "./VideoThumbnail";
@@ -25,7 +27,6 @@ function VideoSearchResults({ videos }: VideoSearchResultsProps): JSX.Element {
         spacing={2}
         justifyContent="space-evenly"
         alignItems="center"
-        sx={{ marginTop: "1em" }}
       >
         {videos.map((video: any) => {
           return (

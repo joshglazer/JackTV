@@ -1,3 +1,5 @@
+"use client";
+
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Link from "@mui/material/Link";
@@ -19,6 +21,8 @@ export default function Footer(): JSX.Element {
         sx={{
           display: "flex",
           justifyContent: "space-between",
+          flexDirection: { xs: "column", sm: "row" },
+          textAlign: { xs: "center", sm: "left" },
         }}
       >
         <Typography variant="body1">
@@ -28,13 +32,12 @@ export default function Footer(): JSX.Element {
           </Link>{" "}
           Project
         </Typography>
-        <Typography variant="body1">
-          <Link
-            href="https://github.com/joshglazer/setlist-builder"
-            target="_blank"
-          >
-            <GitHubIcon />
-            Source Code on Github
+        <Typography
+          variant="body1"
+          sx={{ marginTop: { xs: "0.5em", sm: "0" } }}
+        >
+          <Link href="https://github.com/joshglazer/jacktv" target="_blank">
+            <GitHubIcon sx={{ fontSize: "smaller" }} /> Source Code on Github
           </Link>
         </Typography>
       </Container>

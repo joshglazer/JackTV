@@ -1,3 +1,5 @@
+"use client";
+
 import { useVideoSearchContext } from "@/store/VideoSearchContext";
 import { Fragment } from "react";
 import DefaultVideoSearchTerms from "./DefaultVideoSearchTerms";
