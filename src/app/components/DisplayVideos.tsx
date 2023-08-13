@@ -4,9 +4,10 @@ import { useVideoSearchContext } from "@/store/VideoSearchContext";
 import { Fragment } from "react";
 import DefaultVideoSearchTerms from "./DefaultVideoSearchTerms";
 import VideoSearchResults from "./VideoSearchResults";
+import LoadingDialog from "./LoadingDialog";
 
 export default function DisplayVideos() {
-  const { videos } = useVideoSearchContext();
+  const { videos, isLoading } = useVideoSearchContext();
 
   return (
     <Fragment>
@@ -15,6 +16,7 @@ export default function DisplayVideos() {
       ) : (
         <DefaultVideoSearchTerms />
       )}
+      <LoadingDialog isOpen={isLoading} />
     </Fragment>
   );
 }
