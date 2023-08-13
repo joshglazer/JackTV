@@ -5,8 +5,8 @@ import axios from "axios";
 import {
   ReactNode,
   createContext,
+  useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -14,13 +14,17 @@ import {
 type VideoSearchContextType = {
   searchTerm: string;
   updateSearchTerm: (updatedSearchTerm: string) => void;
+  searchYoutube: () => Promise<void>;
   videos: any[];
+  isLoading: boolean;
 };
 
 const VideoSearchContextDefaultValues: VideoSearchContextType = {
   updateSearchTerm: () => null,
+  searchYoutube: async () => undefined,
   searchTerm: "",
   videos: [],
+  isLoading: false,
 };
 
 const VideoSearchContext = createContext<VideoSearchContextType>(
@@ -38,32 +42,19 @@ type Props = {
 export function VideoSearchProvider({ children }: Props): JSX.Element {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [videos, setVideos] = useState<any[]>([]);
+  const [nextPageToken, setNextPageToken] = useState<string>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const value: VideoSearchContextType = useMemo(
-    () => ({
-      searchTerm,
-      updateSearchTerm,
-      videos,
-    }),
-    [searchTerm, videos]
-  );
-
-  function updateSearchTerm(updatedSearchTerm: string) {
-    console.log("HI");
-    setSearchTerm(updatedSearchTerm);
-  }
-
-  useEffect(() => {
-    searchYoutube(searchTerm);
-  }, [searchTerm]);
-
-  const searchYoutube = async (searchTerm: string) => {
+  const searchYoutube = useCallback(async () => {
+    console.log("SEARCH ME", searchTerm);
     if (process.env.NEXT_PUBLIC_USE_MOCK_DATA) {
       setVideos(mockVideos);
       return;
     }
 
     if (searchTerm) {
+      setIsLoading(true);
+
       try {
         const response = await axios.get(
           "https://www.googleapis.com/youtube/v3/search",
@@ -77,6 +68,7 @@ export function VideoSearchProvider({ children }: Props): JSX.Element {
               videoEmbeddable: "true",
               relevanceLanguage: "en",
               duration: "medium",
+              pageToken: nextPageToken,
             },
           }
         );
@@ -97,7 +89,7 @@ export function VideoSearchProvider({ children }: Props): JSX.Element {
           }
         );
 
-        const filteredVideos = videoDetailsResponse.data.items.filter(
+        let filteredVideos = videoDetailsResponse.data.items.filter(
           (video: any) => {
             const duration = video.contentDetails.duration;
             const durationRegex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
@@ -117,14 +109,48 @@ export function VideoSearchProvider({ children }: Props): JSX.Element {
           }
         );
 
+        const currentVideos = nextPageToken ? videos : [];
+
+        if (nextPageToken) {
+          filteredVideos = [...currentVideos, ...filteredVideos];
+        }
+
         setVideos(filteredVideos);
+        setNextPageToken(response.data.nextPageToken);
+        setIsLoading(false);
+        console.log(
+          "token",
+          videoDetailsResponse,
+          videoDetailsResponse.data.nextPageToken
+        );
       } catch (error) {
         console.error("Error searching videos:", error);
+        setIsLoading(false);
       }
     } else {
       setVideos([]);
     }
-  };
+  }, [nextPageToken, searchTerm, videos]);
+
+  const updateSearchTerm = useCallback(
+    (updatedSearchTerm: string) => {
+      setNextPageToken(undefined);
+      setSearchTerm(updatedSearchTerm);
+      searchYoutube();
+    },
+    [searchYoutube]
+  );
+
+  const value: VideoSearchContextType = useMemo(
+    () => ({
+      searchTerm,
+      updateSearchTerm,
+      searchYoutube,
+      videos,
+      isLoading,
+    }),
+    [searchTerm, updateSearchTerm, searchYoutube, videos, isLoading]
+  );
 
   return (
     <VideoSearchContext.Provider value={value}>

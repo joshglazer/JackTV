@@ -2,9 +2,10 @@
 
 import Grid from "@mui/material/Grid";
 import { Fragment, useState } from "react";
-import VideoThumbnail from "./VideoThumbnail";
 import VideoModal from "./VideoModal";
-
+import VideoThumbnail from "./VideoThumbnail";
+import MoreVideosButton from "./MoreVideosButton";
+import Box from "@mui/material/Box";
 interface VideoSearchResultsProps {
   videos: any[];
 }
@@ -40,6 +41,9 @@ function VideoSearchResults({ videos }: VideoSearchResultsProps): JSX.Element {
           );
         })}
       </Grid>
+      <Box sx={{ textAlign: "center", marginTop: "1em", marginBottom: "1em" }}>
+        <MoreVideosButton />
+      </Box>
       <VideoModal videoId={selectedVideoId} handleClose={handleClose} />
     </Fragment>
   );
