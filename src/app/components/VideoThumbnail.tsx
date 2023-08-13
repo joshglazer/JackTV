@@ -30,7 +30,6 @@ export default function VideoThumbnail({
           alt={`${video.snippet.title} thumbnail`}
           width={thumbnail.width}
           height={thumbnail.height}
-          objectFit="contain"
           priority
         />
       </CardMedia>
