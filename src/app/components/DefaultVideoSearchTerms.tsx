@@ -24,6 +24,15 @@ const defaultVideoSearchTermItems: DefaultVideoSearchTermItem[] = [
   {
     name: "Paxton Power Rangers",
   },
+  {
+    name: "Ryan's World",
+  },
+  {
+    name: "Bluey",
+  },
+  {
+    name: "Peppa Pig",
+  },
 ];
 
 export default function DefaultVideoSearchTerms(): JSX.Element {
