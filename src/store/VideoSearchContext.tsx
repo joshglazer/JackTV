@@ -59,7 +59,10 @@ export function VideoSearchProvider({ children }: Props): JSX.Element {
   async function loadMore(): Promise<void> {
     dispatch({ type: "setIsLoading" });
     try {
-      const { videos, nextPageToken } = await searchYoutube(state.searchTerm);
+      const { videos, nextPageToken } = await searchYoutube(
+        state.searchTerm,
+        state.nextPageToken
+      );
       dispatch({ type: "loadMoreSuccess", videos, nextPageToken });
     } catch (error) {
       const errorMessage =

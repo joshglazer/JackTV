@@ -64,21 +64,6 @@ async function searchYoutube(
     videos: filteredVideos,
     nextPageToken: response.data.nextPageToken,
   };
-
-  // const currentVideos = nextPageToken ? videos : [];
-
-  // if (nextPageToken) {
-  //   filteredVideos = [...currentVideos, ...filteredVideos];
-  // }
-
-  // setVideos(filteredVideos);
-  // setNextPageToken(response.data.nextPageToken);
-  // setIsLoading(false);
-  // console.log(
-  //   "token",
-  //   videoDetailsResponse,
-  //   videoDetailsResponse.data.nextPageToken
-  // );
 }
 
 export { searchYoutube };
