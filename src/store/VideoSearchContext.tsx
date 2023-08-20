@@ -1,34 +1,28 @@
 "use client";
 
-import { mockVideos } from "@/data/mockVideos";
-import axios from "axios";
+import { searchYoutube } from "@/api/youtube";
+import { ReactNode, createContext, useContext, useReducer } from "react";
 import {
-  ReactNode,
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from "react";
+  videoSearchInitialState,
+  videoSearchReducer,
+} from "./VideoSearchReducer";
 
-type VideoSearchContextType = {
-  searchTerm: string;
-  updateSearchTerm: (updatedSearchTerm: string) => void;
-  searchYoutube: () => Promise<void>;
+interface VideoSearchContextType {
   videos: any[];
-  isLoading: boolean;
-};
+  search: (searchTerm: string) => Promise<void>;
+  reset: () => void;
+  loadMore: () => Promise<void>;
+}
 
-const VideoSearchContextDefaultValues: VideoSearchContextType = {
-  updateSearchTerm: () => null,
-  searchYoutube: async () => undefined,
-  searchTerm: "",
-  videos: [],
-  isLoading: false,
+const videoSearchContextDefaultValues = {
+  ...videoSearchInitialState,
+  search: async (_searchTerm: string) => undefined,
+  reset: () => undefined,
+  loadMore: async () => undefined,
 };
 
 const VideoSearchContext = createContext<VideoSearchContextType>(
-  VideoSearchContextDefaultValues
+  videoSearchContextDefaultValues
 );
 
 export function useVideoSearchContext() {
@@ -40,121 +34,40 @@ type Props = {
 };
 
 export function VideoSearchProvider({ children }: Props): JSX.Element {
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [videos, setVideos] = useState<any[]>([]);
-  const [nextPageToken, setNextPageToken] = useState<string>();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const searchYoutube = useCallback(async () => {
-    console.log("SEARCH ME", searchTerm);
-    if (process.env.NEXT_PUBLIC_USE_MOCK_DATA) {
-      setVideos(mockVideos);
-      return;
-    }
-
-    if (searchTerm) {
-      setIsLoading(true);
-
-      try {
-        const response = await axios.get(
-          "https://www.googleapis.com/youtube/v3/search",
-          {
-            params: {
-              q: `${searchTerm} 5 minutes`,
-              part: "id",
-              type: "video",
-              maxResults: 50,
-              key: process.env.NEXT_PUBLIC_YOUTUBE_API_KEY,
-              videoEmbeddable: "true",
-              relevanceLanguage: "en",
-              duration: "medium",
-              pageToken: nextPageToken,
-            },
-          }
-        );
-
-        const videoIDs = response.data.items.map(
-          ({ id }: { id: { videoId: string } }) => id.videoId
-        );
-
-        const videoDetailsResponse = await axios.get(
-          "https://www.googleapis.com/youtube/v3/videos",
-          {
-            params: {
-              q: searchTerm,
-              part: "id,snippet,contentDetails",
-              id: videoIDs.join(","),
-              key: process.env.NEXT_PUBLIC_YOUTUBE_API_KEY,
-            },
-          }
-        );
-
-        let filteredVideos = videoDetailsResponse.data.items.filter(
-          (video: any) => {
-            const duration = video.contentDetails.duration;
-            const durationRegex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
-
-            if (duration) {
-              const match = duration.match(durationRegex);
-              if (match) {
-                const [, hours, minutes, seconds] = match;
-                const totalSeconds =
-                  (parseInt(hours) || 0) * 3600 +
-                  (parseInt(minutes) || 0) * 60 +
-                  (parseInt(seconds) || 0);
-                return totalSeconds < 360; // Filter videos less than 6 minutes (360 seconds)
-              }
-            }
-            return false;
-          }
-        );
-
-        const currentVideos = nextPageToken ? videos : [];
-
-        if (nextPageToken) {
-          filteredVideos = [...currentVideos, ...filteredVideos];
-        }
-
-        setVideos(filteredVideos);
-        setNextPageToken(response.data.nextPageToken);
-        setIsLoading(false);
-        console.log(
-          "token",
-          videoDetailsResponse,
-          videoDetailsResponse.data.nextPageToken
-        );
-      } catch (error) {
-        console.error("Error searching videos:", error);
-        setIsLoading(false);
-      }
-    } else {
-      setVideos([]);
-    }
-  }, [nextPageToken, searchTerm, videos]);
-
-  const updateSearchTerm = useCallback(
-    (updatedSearchTerm: string) => {
-      setVideos([]);
-      setNextPageToken(undefined);
-      setSearchTerm(updatedSearchTerm);
-      searchYoutube();
-    },
-    [searchYoutube]
+  const [state, dispatch] = useReducer(
+    videoSearchReducer,
+    videoSearchInitialState
   );
 
-  const value: VideoSearchContextType = useMemo(
-    () => ({
-      searchTerm,
-      updateSearchTerm,
-      searchYoutube,
-      videos,
-      isLoading,
-    }),
-    [searchTerm, updateSearchTerm, searchYoutube, videos, isLoading]
-  );
+  async function search(searchTerm: string): Promise<void> {
+    dispatch({ type: "setIsLoading" });
+    try {
+      const { videos, nextPageToken } = await searchYoutube(searchTerm);
+      dispatch({ type: "searchSuccess", searchTerm, videos, nextPageToken });
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "An Error Occurred";
+      dispatch({ type: "searchFailure", error: errorMessage });
+    }
+  }
 
+  function reset(): void {
+    dispatch({ type: "reset" });
+  }
+
+  async function loadMore(): Promise<void> {
+    dispatch({ type: "setIsLoading" });
+    try {
+      const { videos, nextPageToken } = await searchYoutube(state.searchTerm);
+      dispatch({ type: "loadMoreSuccess", videos, nextPageToken });
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "An Error Occurred";
+      dispatch({ type: "loadMoreFailure", error: errorMessage });
+    }
+  }
   return (
-    <VideoSearchContext.Provider value={value}>
+    <VideoSearchContext.Provider value={{ ...state, search, reset, loadMore }}>
       {children}
     </VideoSearchContext.Provider>
   );

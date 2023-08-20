@@ -36,10 +36,10 @@ const defaultVideoSearchTermItems: DefaultVideoSearchTermItem[] = [
 ];
 
 export default function DefaultVideoSearchTerms(): JSX.Element {
-  const { updateSearchTerm } = useVideoSearchContext();
+  const { search } = useVideoSearchContext();
 
   function handleOnClick(event: MouseEvent<HTMLElement>) {
-    updateSearchTerm(event.currentTarget.innerText);
+    search(event.currentTarget.innerText);
   }
 
   return (

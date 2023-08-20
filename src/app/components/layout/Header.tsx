@@ -54,10 +54,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function Header() {
-  const { updateSearchTerm } = useVideoSearchContext();
+  const { search, reset } = useVideoSearchContext();
 
   const debouncedOnChange = debounce((value: string) => {
-    updateSearchTerm(value);
+    search(value);
   }, 500);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,8 +66,7 @@ export default function Header() {
   };
 
   const resetSearch = () => {
-    console.log("RESET");
-    updateSearchTerm("");
+    reset();
   };
 
   return (
