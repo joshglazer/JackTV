@@ -134,6 +134,7 @@ export function VideoSearchProvider({ children }: Props): JSX.Element {
 
   const updateSearchTerm = useCallback(
     (updatedSearchTerm: string) => {
+      setVideos([]);
       setNextPageToken(undefined);
       setSearchTerm(updatedSearchTerm);
       searchYoutube();
