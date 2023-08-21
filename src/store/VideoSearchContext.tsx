@@ -10,6 +10,7 @@ import {
 interface VideoSearchContextType {
   videos: any[];
   isLoading: boolean;
+  searchTerm: string;
   search: (searchTerm: string) => Promise<void>;
   reset: () => void;
   loadMore: () => Promise<void>;

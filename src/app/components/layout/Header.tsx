@@ -10,6 +10,7 @@ import Typography from "@mui/material/Typography";
 import { alpha, styled } from "@mui/material/styles";
 import { debounce } from "lodash";
 import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -54,20 +55,32 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function Header() {
-  const { search, reset } = useVideoSearchContext();
+  const [tempSearchTerm, setTempSearchTerm] = useState("");
+  const { search, reset, searchTerm } = useVideoSearchContext();
 
-  const debouncedOnChange = debounce((value: string) => {
-    search(value);
-  }, 500);
+  const debouncedOnChange = useRef(
+    debounce((value: string) => {
+      if (value) {
+        search(value);
+      } else {
+        reset();
+      }
+    }, 500)
+  ).current;
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    setTempSearchTerm(searchTerm);
+  }, [searchTerm]);
+
+  function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     const newValue = event.target.value;
+    setTempSearchTerm(newValue);
     debouncedOnChange(newValue);
-  };
+  }
 
-  const resetSearch = () => {
+  function resetSearch() {
     reset();
-  };
+  }
 
   return (
     <Box>
@@ -100,6 +113,7 @@ export default function Header() {
               placeholder="Search…"
               inputProps={{ "aria-label": "search" }}
               onChange={handleInputChange}
+              value={tempSearchTerm}
             />
           </Search>
         </Toolbar>
