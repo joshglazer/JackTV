@@ -36,6 +36,21 @@ const defaultVideoSearchTermItems: SearchTerm[] = [
       "https://i.ytimg.com/vi/k3zMUkBKjKw/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCNJWeBVv_Z4rhnb0tXn3_r2JByAA",
   },
   {
+    name: "Blaze and the Monster Machines",
+    pictureUrl:
+      "https://yt3.googleusercontent.com/ytc/APkrFKYBg_xITgr9MTx-gT2ovt2UC5e6ZgqksU27QFixiA=s176-c-k-c0x00ffffff-no-rj",
+  },
+  {
+    name: "Super Wings",
+    pictureUrl:
+      "https://yt3.googleusercontent.com/ytc/APkrFKZzDUMj5ApDF9lbzkgRsL08S9XRuBH2_3O_FwyzbQ=s176-c-k-c0x00ffffff-no-rj",
+  },
+  {
+    name: "Batwheels",
+    pictureUrl:
+      "https://i.ytimg.com/vi/Iddo1dnCgeg/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCR_ISgbdr0wDO0m0639iEr_L5OkQ",
+  },
+  {
     name: "Young Jedi Adventures",
     pictureUrl:
       "https://i.ytimg.com/vi/IqvDvQ1tuJ4/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLB0iq8ljReXwjGMMpJ7DRd1DT9dKA",
