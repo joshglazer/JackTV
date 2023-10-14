@@ -44,7 +44,7 @@ export default function SearchTermThumbnail({
         <Typography gutterBottom variant="body1" component="div">
           <LinesEllipsis
             text={name}
-            maxLine="2"
+            maxLine="1"
             ellipsis="..."
             trimRight
             basedOn="letters"
