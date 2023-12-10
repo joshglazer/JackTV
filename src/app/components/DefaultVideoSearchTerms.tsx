@@ -13,7 +13,10 @@ export interface SearchTerm {
 
 export default function DefaultVideoSearchTerms(): JSX.Element {
   const { data, isLoading } = useQuery(
-    supabaseClient.from("search_terms").select("id, name, picture_url"),
+    supabaseClient
+      .from("search_terms")
+      .select("id, name, picture_url")
+      .order("weight", { ascending: true }),
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
